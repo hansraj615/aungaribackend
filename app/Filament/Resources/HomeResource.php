@@ -16,6 +16,9 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use App\Filament\Resources\HomeResource\Pages;
+use App\Helpers\TranslatorHelper;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
 class HomeResource extends Resource
 {
@@ -51,12 +54,38 @@ class HomeResource extends Resource
                                             ->openable()
                                             ->columnSpanFull(),
 
-                                        TextInput::make('hero_section.title')
+                                        TextInput::make('hero_section.title_en')
+                                            ->label('Title (English)')
                                             ->required()
-                                            ->maxLength(255),
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                $translated = TranslatorHelper::translate($state ?? '', 'hi');
+                                                $set('hero_section.title_hi', $translated);
+                                            }),
 
-                                        TextInput::make('hero_section.subtitle')
-                                            ->maxLength(500),
+                                        TextInput::make('hero_section.title_hi')
+                                            ->label('Title (Hindi)')
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                $translated = TranslatorHelper::translate($state ?? '', 'en');
+                                                $set('hero_section.title_en', $translated);
+                                            }),
+
+                                        TextInput::make('hero_section.subtitle_en')
+                                            ->label('Subtitle (English)')
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                $translated = TranslatorHelper::translate($state ?? '', 'hi');
+                                                $set('hero_section.subtitle_hi', $translated);
+                                            }),
+
+                                        TextInput::make('hero_section.subtitle_hi')
+                                            ->label('Subtitle (Hindi)')
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                $translated = TranslatorHelper::translate($state ?? '', 'en');
+                                                $set('hero_section.subtitle_en', $translated);
+                                            }),
                                     ]),
                             ]),
 
@@ -72,7 +101,7 @@ class HomeResource extends Resource
                                             ->collapsible()
                                             ->cloneable()
                                             ->itemLabel(fn(array $state): ?string =>
-                                            $state['title'] ?? 'New Section')
+                                            $state['title_en'] ?? 'New Section')
                                             ->schema([
                                                 Select::make('type')
                                                     ->options([
@@ -86,11 +115,41 @@ class HomeResource extends Resource
                                                     ->live()
                                                     ->columnSpanFull(),
 
-                                                TextInput::make('title')
+                                                TextInput::make('title_en')
+                                                    ->label('Section Title (English)')
                                                     ->required()
-                                                    ->maxLength(255),
+                                                    ->live(onBlur: true)
+                                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                        $translated = TranslatorHelper::translate($state ?? '', 'hi');
+                                                        $set('title_hi', $translated);
+                                                    }),
 
-                                                // Conditional fields
+                                                TextInput::make('title_hi')
+                                                    ->label('Section Title (Hindi)')
+                                                    ->live(onBlur: true)
+                                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                        $translated = TranslatorHelper::translate($state ?? '', 'en');
+                                                        $set('title_en', $translated);
+                                                    }),
+
+                                                RichEditor::make('content_en')
+                                                    ->label('Content (English)')
+                                                    ->visible(fn($get) => !in_array($get('type'), ['cards', 'video']))
+                                                    ->live(onBlur: true)
+                                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                        $translated = TranslatorHelper::translate($state ?? '', 'hi');
+                                                        $set('content_hi', $translated);
+                                                    }),
+
+                                                RichEditor::make('content_hi')
+                                                    ->label('Content (Hindi)')
+                                                    ->visible(fn($get) => !in_array($get('type'), ['cards', 'video']))
+                                                    ->live(onBlur: true)
+                                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                        $translated = TranslatorHelper::translate($state ?? '', 'en');
+                                                        $set('content_en', $translated);
+                                                    }),
+
                                                 FileUpload::make('image')
                                                     ->image()
                                                     ->maxSize(5120)
@@ -101,11 +160,6 @@ class HomeResource extends Resource
                                                     in_array($get('type'), ['image_text', 'cards', 'cta']))
                                                     ->columnSpanFull(),
 
-                                                RichEditor::make('content')
-                                                    ->columnSpanFull()
-                                                    ->visible(fn($get) =>
-                                                    !in_array($get('type'), ['cards', 'video'])),
-
                                                 TextInput::make('video_url')
                                                     ->url()
                                                     ->visible(fn($get) => $get('type') === 'video')
@@ -114,17 +168,61 @@ class HomeResource extends Resource
                                                 Forms\Components\Repeater::make('items')
                                                     ->visible(fn($get) => $get('type') === 'cards')
                                                     ->schema([
-                                                        TextInput::make('title')
-                                                            ->required(),
+                                                        TextInput::make('title_en')
+                                                            ->label('Card Title (English)')
+                                                            ->required()
+                                                            ->live(onBlur: true)
+                                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                                $translated = TranslatorHelper::translate($state ?? '', 'hi');
+                                                                $set('title_hi', $translated);
+                                                            }),
+
+                                                        TextInput::make('title_hi')
+                                                            ->label('Card Title (Hindi)')
+                                                            ->live(onBlur: true)
+                                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                                $translated = TranslatorHelper::translate($state ?? '', 'en');
+                                                                $set('title_en', $translated);
+                                                            }),
+
+                                                        Textarea::make('description_en')
+                                                            ->label('Description (English)')
+                                                            ->live(onBlur: true)
+                                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                                $translated = TranslatorHelper::translate($state ?? '', 'hi');
+                                                                $set('description_hi', $translated);
+                                                            }),
+
+                                                        Textarea::make('description_hi')
+                                                            ->label('Description (Hindi)')
+                                                            ->live(onBlur: true)
+                                                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                                $translated = TranslatorHelper::translate($state ?? '', 'en');
+                                                                $set('description_en', $translated);
+                                                            }),
+
                                                         TextInput::make('icon')
                                                             ->maxLength(50),
-                                                        Textarea::make('description')
-                                                            ->columnSpanFull(),
                                                     ])
                                                     ->grid(2),
 
-                                                TextInput::make('button_text')
-                                                    ->visible(fn($get) => $get('type') === 'cta'),
+                                                TextInput::make('button_text_en')
+                                                    ->label('Button Text (English)')
+                                                    ->visible(fn($get) => $get('type') === 'cta')
+                                                    ->live(onBlur: true)
+                                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                        $translated = TranslatorHelper::translate($state ?? '', 'hi');
+                                                        $set('button_text_hi', $translated);
+                                                    }),
+
+                                                TextInput::make('button_text_hi')
+                                                    ->label('Button Text (Hindi)')
+                                                    ->visible(fn($get) => $get('type') === 'cta')
+                                                    ->live(onBlur: true)
+                                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                                        $translated = TranslatorHelper::translate($state ?? '', 'en');
+                                                        $set('button_text_en', $translated);
+                                                    }),
 
                                                 TextInput::make('button_link')
                                                     ->visible(fn($get) => $get('type') === 'cta'),
@@ -170,9 +268,7 @@ class HomeResource extends Resource
                     ->dateTime()
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->iconButton(),
@@ -189,9 +285,7 @@ class HomeResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
