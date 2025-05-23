@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class About extends Model
 {
-
-
     protected $fillable = [
-        'title',
+        'title_en',
+        'title_hi',
         'slug',
-        'body',
+        'body_en',
+        'body_hi',
         'images'
     ];
 
     protected $casts = [
-        'images' => 'array',
+        'images' => 'array'
     ];
 }
