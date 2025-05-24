@@ -25,61 +25,51 @@ Route::get('/visitor-count', function (Request $request) {
         'time' => $now->toDateTimeString()
     ]);
 
-    // Get current counts without locking first
-    $currentCounts = Cache::remember('current_visitor_counts', 1, function () {
-        return Visitor::first() ?? Visitor::create([
-            'id' => 1,
-            'total_visits' => 0,
-            'unique_visitors' => 0
-        ]);
-    });
-
     // Try to acquire a lock for this IP
     $lockKey = 'visitor_lock_' . $ip;
     if (!Cache::add($lockKey, true, 1)) { // Lock for 1 second
-        Log::info('Request blocked by lock', ['ip' => $ip]);
+        // Get current counts from database
+        $currentCounts = Visitor::first();
         return [
-            'total_visits' => $currentCounts->total_visits,
-            'unique_visitors' => $currentCounts->unique_visitors
+            'total_visits' => $currentCounts ? $currentCounts->total_visits : 0,
+            'unique_visitors' => $currentCounts ? $currentCounts->unique_visitors : 0
         ];
     }
 
     try {
-        return DB::transaction(function () use ($ip, $key, $now, $request) {
+        return DB::transaction(function () use ($ip, $key, $now) {
             // Lock the visitor record for update
-            $visitorCounts = Visitor::lockForUpdate()->find(1);
-
-            if (!$visitorCounts) {
-                $visitorCounts = Visitor::create([
-                    'id' => 1,
+            $visitorCounts = Visitor::lockForUpdate()->firstOrCreate(
+                ['id' => 1],
+                [
                     'total_visits' => 0,
                     'unique_visitors' => 0
-                ]);
-            }
+                ]
+            );
 
             // Increment total visits
             $visitorCounts->increment('total_visits');
             Log::info('Incremented total visits');
 
             // Check if this is a unique visitor
-            if (!Cache::has($key)) {
+            $uniqueVisitor = UniqueVisitor::where('ip_address', $ip)->first();
+
+            if (!$uniqueVisitor) {
                 Log::info('New unique visitor detected', ['ip' => $ip]);
 
-                // Set cache for 6 hours
-                Cache::put($key, true, now()->addHours(6));
+                // Create new unique visitor record
+                UniqueVisitor::create([
+                    'ip_address' => $ip,
+                    'first_visit_at' => $now,
+                    'last_visit_at' => $now
+                ]);
 
-                // Record or update unique visitor
-                $uniqueVisitor = UniqueVisitor::firstOrCreate(
-                    ['ip_address' => $ip],
-                    ['first_visit_at' => $now]
-                );
-
+                // Increment unique visitors count
+                $visitorCounts->increment('unique_visitors');
+                Log::info('Incremented unique visitors');
+            } else {
+                // Update last visit timestamp
                 $uniqueVisitor->update(['last_visit_at' => $now]);
-
-                if ($uniqueVisitor->wasRecentlyCreated) {
-                    $visitorCounts->increment('unique_visitors');
-                    Log::info('Incremented unique visitors');
-                }
             }
 
             // Get fresh counts
@@ -89,9 +79,6 @@ Route::get('/visitor-count', function (Request $request) {
                 'total_visits' => $freshCounts->total_visits,
                 'unique_visitors' => $freshCounts->unique_visitors
             ]);
-
-            // Update the cache
-            Cache::put('current_visitor_counts', $freshCounts, 60);
 
             return [
                 'total_visits' => $freshCounts->total_visits,
