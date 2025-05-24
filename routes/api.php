@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Http\Controllers\Api\GalleryController;
+use App\Http\Controllers\Api\OccasionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -90,3 +92,14 @@ Route::get('/visitor-count', function (Request $request) {
         Cache::forget($lockKey);
     }
 });
+
+// Gallery Routes
+Route::get('galleries', [GalleryController::class, 'index']);
+Route::get('galleries/featured', [GalleryController::class, 'featured']);
+Route::get('galleries/latest', [GalleryController::class, 'latest']);
+Route::get('galleries/{id}', [GalleryController::class, 'show']);
+
+// Occasion Routes
+Route::get('occasions', [OccasionController::class, 'index']);
+Route::get('occasions/active', [OccasionController::class, 'activeWithCounts']);
+Route::get('occasions/{slug}', [OccasionController::class, 'show']);
