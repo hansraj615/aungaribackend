@@ -39,26 +39,10 @@ class GalleryResource extends Resource
                                             Forms\Components\TextInput::make('title_en')
                                                 ->label('Title (English)')
                                                 ->required()
-                                                ->maxLength(255)
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                    // Auto translate to Hindi
-                                                    $translated = TranslatorHelper::translate($state ?? '', 'hi');
-                                                    if ($translated) {
-                                                        $set('title_hi', $translated);
-                                                    }
-                                                }),
+                                                ->maxLength(255),
                                             Forms\Components\Textarea::make('description_en')
                                                 ->label('Description (English)')
-                                                ->maxLength(65535)
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                    // Auto translate to Hindi
-                                                    $translated = TranslatorHelper::translateRichContent($state ?? '', 'hi');
-                                                    if ($translated) {
-                                                        $set('description_hi', $translated);
-                                                    }
-                                                }),
+                                                ->maxLength(65535),
                                             Forms\Components\Actions::make([
                                                 Forms\Components\Actions\Action::make('translate_to_hindi')
                                                     ->label('Translate to Hindi')
@@ -111,26 +95,10 @@ class GalleryResource extends Resource
                                             Forms\Components\TextInput::make('title_hi')
                                                 ->label('Title (Hindi)')
                                                 ->required()
-                                                ->maxLength(255)
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                    // Auto translate to English
-                                                    $translated = TranslatorHelper::translate($state ?? '', 'en');
-                                                    if ($translated) {
-                                                        $set('title_en', $translated);
-                                                    }
-                                                }),
+                                                ->maxLength(255),
                                             Forms\Components\Textarea::make('description_hi')
                                                 ->label('Description (Hindi)')
-                                                ->maxLength(65535)
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                    // Auto translate to English
-                                                    $translated = TranslatorHelper::translateRichContent($state ?? '', 'en');
-                                                    if ($translated) {
-                                                        $set('description_en', $translated);
-                                                    }
-                                                }),
+                                                ->maxLength(65535),
                                             Forms\Components\Actions::make([
                                                 Forms\Components\Actions\Action::make('translate_to_english')
                                                     ->label('Translate to English')
@@ -181,80 +149,44 @@ class GalleryResource extends Resource
                                         ]),
                                     ]),
                             ])->columnSpanFull(),
-                        Forms\Components\Section::make('Gallery Images')
-                            ->schema([
-                                Forms\Components\Repeater::make('images')
-                                    ->relationship()
-                                    ->schema([
-                                        Forms\Components\FileUpload::make('image_path')
-                                            ->label('Image')
-                                            ->image()
-                                            ->imageEditor()
-                                            ->required()
-                                            ->maxSize(5120) // 5MB
-                                            ->directory('gallery'),
-                                        Forms\Components\Grid::make(2)
-                                            ->schema([
-                                                Forms\Components\TextInput::make('caption_en')
-                                                    ->label('Caption (English)')
-                                                    ->live(onBlur: true)
-                                                    ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                        $translated = TranslatorHelper::translate($state ?? '', 'hi');
-                                                        if ($translated) {
-                                                            $set('caption_hi', $translated);
-                                                        }
-                                                    }),
-                                                Forms\Components\TextInput::make('caption_hi')
-                                                    ->label('Caption (Hindi)')
-                                                    ->live(onBlur: true)
-                                                    ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                        $translated = TranslatorHelper::translate($state ?? '', 'en');
-                                                        if ($translated) {
-                                                            $set('caption_en', $translated);
-                                                        }
-                                                    }),
-                                            ]),
-                                    ])
-                                    ->orderable('display_order')
-                                    ->orderColumn('display_order')
-                                    ->defaultItems(1)
-                                    ->addActionLabel('Add Image')
-                                    ->columns(1),
-                            ])->columnSpanFull(),
                         Forms\Components\Select::make('occasion_id')
                             ->relationship('occasion', 'name_en')
-                            ->required()
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm([
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('name_en')
-                                            ->label('Name (English)')
-                                            ->required()
-                                            ->maxLength(255),
-                                        Forms\Components\TextInput::make('name_hi')
-                                            ->label('Name (Hindi)')
-                                            ->required()
-                                            ->maxLength(255),
-                                        Forms\Components\Textarea::make('description_en')
-                                            ->label('Description (English)')
-                                            ->maxLength(65535),
-                                        Forms\Components\Textarea::make('description_hi')
-                                            ->label('Description (Hindi)')
-                                            ->maxLength(65535),
-                                    ]),
-                            ]),
+                            ->required(),
                         Forms\Components\DateTimePicker::make('event_date')
-                            ->label('Event Date & Time'),
+                            ->label('Event Date'),
                         Forms\Components\Toggle::make('is_featured')
-                            ->label('Featured Gallery'),
+                            ->label('Featured'),
                         Forms\Components\TextInput::make('display_order')
                             ->numeric()
-                            ->default(0)
-                            ->minValue(0),
+                            ->default(0),
                     ])
                     ->columns(2),
+                Forms\Components\Section::make('Gallery Images')
+                    ->schema([
+                        Forms\Components\Repeater::make('images')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\FileUpload::make('image_path')
+                                    ->label('Image')
+                                    ->image()
+                                    ->required(),
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('caption_en')
+                                            ->label('Caption (English)')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('caption_hi')
+                                            ->label('Caption (Hindi)')
+                                            ->maxLength(255),
+                                    ]),
+                                Forms\Components\TextInput::make('display_order')
+                                    ->numeric()
+                                    ->default(0),
+                            ])
+                            ->orderColumn('display_order')
+                            ->defaultItems(1)
+                            ->columnSpanFull(),
+                    ])->columnSpanFull(),
             ]);
     }
 

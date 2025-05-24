@@ -46,23 +46,10 @@ class OccasionResource extends Resource
                                                     if ($operation === 'create') {
                                                         $set('slug', Str::slug($state));
                                                     }
-                                                    // Auto translate to Hindi
-                                                    $translated = TranslatorHelper::translate($state ?? '', 'hi');
-                                                    if ($translated) {
-                                                        $set('name_hi', $translated);
-                                                    }
                                                 }),
                                             Forms\Components\Textarea::make('description_en')
                                                 ->label('Description (English)')
-                                                ->maxLength(65535)
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                    // Auto translate to Hindi
-                                                    $translated = TranslatorHelper::translateRichContent($state ?? '', 'hi');
-                                                    if ($translated) {
-                                                        $set('description_hi', $translated);
-                                                    }
-                                                }),
+                                                ->maxLength(65535),
                                             Forms\Components\Actions::make([
                                                 Forms\Components\Actions\Action::make('translate_to_hindi')
                                                     ->label('Translate to Hindi')
@@ -115,26 +102,10 @@ class OccasionResource extends Resource
                                             Forms\Components\TextInput::make('name_hi')
                                                 ->label('Name (Hindi)')
                                                 ->required()
-                                                ->maxLength(255)
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                    // Auto translate to English
-                                                    $translated = TranslatorHelper::translate($state ?? '', 'en');
-                                                    if ($translated) {
-                                                        $set('name_en', $translated);
-                                                    }
-                                                }),
+                                                ->maxLength(255),
                                             Forms\Components\Textarea::make('description_hi')
                                                 ->label('Description (Hindi)')
-                                                ->maxLength(65535)
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                    // Auto translate to English
-                                                    $translated = TranslatorHelper::translateRichContent($state ?? '', 'en');
-                                                    if ($translated) {
-                                                        $set('description_en', $translated);
-                                                    }
-                                                }),
+                                                ->maxLength(65535),
                                             Forms\Components\Actions::make([
                                                 Forms\Components\Actions\Action::make('translate_to_english')
                                                     ->label('Translate to English')
