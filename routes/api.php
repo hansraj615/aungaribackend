@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\OccasionController;
+use App\Http\Controllers\Api\EventController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -103,3 +104,7 @@ Route::get('galleries/{id}', [GalleryController::class, 'show']);
 Route::get('occasions', [OccasionController::class, 'index']);
 Route::get('occasions/active', [OccasionController::class, 'activeWithCounts']);
 Route::get('occasions/{slug}', [OccasionController::class, 'show']);
+
+// Event Routes
+Route::get('events', [EventController::class, 'index']);
+Route::get('events/{id}', [EventController::class, 'show']);

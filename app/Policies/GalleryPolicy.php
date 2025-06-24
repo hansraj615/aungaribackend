@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\About;
+use App\Models\Gallery;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AboutPolicy
+class GalleryPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class AboutPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_about');
+        return $user->can('view_any_gallery');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, About $about): bool
+    public function view(User $user, Gallery $gallery): bool
     {
-        return $user->can('view_about');
+        return $user->can('view_gallery');
     }
 
     /**
@@ -31,23 +31,23 @@ class AboutPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_about');
+        return $user->can('create_gallery');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, About $about): bool
+    public function update(User $user, Gallery $gallery): bool
     {
-        return $user->can('update_about');
+        return $user->can('update_gallery');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, About $about): bool
+    public function delete(User $user, Gallery $gallery): bool
     {
-        return $user->can('delete_about');
+        return $user->can('delete_gallery');
     }
 
     /**
@@ -55,15 +55,15 @@ class AboutPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_about');
+        return $user->can('delete_any_gallery');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, About $about): bool
+    public function forceDelete(User $user, Gallery $gallery): bool
     {
-        return $user->can('force_delete_about');
+        return $user->can('force_delete_gallery');
     }
 
     /**
@@ -71,15 +71,15 @@ class AboutPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_about');
+        return $user->can('force_delete_any_gallery');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, About $about): bool
+    public function restore(User $user, Gallery $gallery): bool
     {
-        return $user->can('restore_about');
+        return $user->can('restore_gallery');
     }
 
     /**
@@ -87,15 +87,15 @@ class AboutPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_about');
+        return $user->can('restore_any_gallery');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, About $about): bool
+    public function replicate(User $user, Gallery $gallery): bool
     {
-        return $user->can('replicate_about');
+        return $user->can('replicate_gallery');
     }
 
     /**
@@ -103,6 +103,6 @@ class AboutPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_about');
+        return $user->can('reorder_gallery');
     }
 }
