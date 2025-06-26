@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\OccasionController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\TrusteeController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -108,3 +109,6 @@ Route::get('occasions/{slug}', [OccasionController::class, 'show']);
 // Event Routes
 Route::get('events', [EventController::class, 'index']);
 Route::get('events/{id}', [EventController::class, 'show']);
+
+// Trustee Routes
+Route::get('trustees', [TrusteeController::class, 'index']);
