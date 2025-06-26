@@ -20,8 +20,11 @@ class GalleryResource extends Resource
     protected static ?string $model = Gallery::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
-
-    protected static ?string $navigationGroup = 'Gallery Management';
+    protected static ?string $navigationGroup = 'Pages';
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     protected static ?int $navigationSort = 2;
 

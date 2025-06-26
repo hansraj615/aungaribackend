@@ -22,7 +22,13 @@ class OccasionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
-    protected static ?string $navigationGroup = 'Gallery Management';
+    protected static ?string $navigationGroup = 'Pages';
+    // protected static ?string $navigationParentItem = 'Gallery Management';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     protected static ?int $navigationSort = 1;
 
