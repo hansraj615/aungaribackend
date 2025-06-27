@@ -27,7 +27,10 @@ class RouteServiceProvider extends ServiceProvider
       // Default API rate limit
       return Limit::perMinute(60)->by($request->user()?->id ?: $key);
     });
-
+    // ✅ Add this new contact-specific limiter
+    RateLimiter::for('contact', function (Request $request) {
+      return Limit::perMinute(5)->by($request->ip()); // Limit contact form to 5 requests per minute per IP
+    });
     $this->routes(function () {
       Route::middleware('api')
         ->prefix('api')

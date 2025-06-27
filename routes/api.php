@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\GalleryController;
 use App\Http\Controllers\Api\OccasionController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\TrusteeController;
+use App\Http\Controllers\Api\ContactController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -112,3 +113,8 @@ Route::get('events/{id}', [EventController::class, 'show']);
 
 // Trustee Routes
 Route::get('trustees', [TrusteeController::class, 'index']);
+
+// Contact Routes
+Route::post('contact', [ContactController::class, 'store'])
+    ->name('contact.store')
+    ->middleware('throttle:contact'); // Apply throttle middleware to limit requests
