@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\OccasionController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\TrusteeController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\DarshanController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -118,3 +119,7 @@ Route::get('trustees', [TrusteeController::class, 'index']);
 Route::post('contact', [ContactController::class, 'store'])
     ->name('contact.store')
     ->middleware('throttle:contact'); // Apply throttle middleware to limit requests
+
+
+Route::get('/darshan-videos', [DarshanController::class, 'index']);
+Route::get('/darshan-videos/{id}', [DarshanController::class, 'show']);
